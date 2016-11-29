@@ -74,7 +74,7 @@ UNKNOWN_SYMBOL = '.'
     [21, 21]
 ]
 
-@grid = Array.new(@cols.size){Array.new(@rows.size, UNKNOWN_SYMBOL)}
+@grid = Array.new(@rows.size){Array.new(@cols.size, UNKNOWN_SYMBOL)}
 
 @known_active.each{|coordinate|
   @grid[coordinate.first][coordinate.last] = ACTIVE_SYMBOL
@@ -110,7 +110,7 @@ def generate_gaps(remaining_size, solids, starting_value, known_mask)
     # end
     min_solid_match = known_mask[new_start, next_solid]
 
-    if max_size < new_start or min_solid_match.size < next_solid or (next_solid == 0 and not min_solid_match.index(INACTIVE_SYMBOL).nil?)
+    if max_size < new_start or min_solid_match.nil? or min_solid_match.size < next_solid or (next_solid == 0 and not known_mask.index(ACTIVE_SYMBOL).nil?)
       puts "1: Remaining: #{remaining_size}, Solids: #{solid_key}, Mask: #{mask_key}"
       puts "1: Max Size: #{max_size}, New Start: #{new_start}, Starting Value: #{starting_value}, Next Solid: #{next_solid}, Min Solid Match: #{min_solid_match}"
       @gap_cache[starting_value][remaining_size][solid_key][mask_key] = nil
@@ -143,9 +143,9 @@ def find_overlap gaps, solids
 end
 
 def display_grid grid
-  puts '╔' + ('═' * grid.size) + '╗'
+  puts '╔' + ('═' * grid.first.size) + '╗'
   puts grid.map{|row| '║' + row * '' + '║'} * "\n"
-  puts '╚' + ('═' * grid.size) + '╝'
+  puts '╚' + ('═' * grid.first.size) + '╝'
 end
 
 def merge_grids g1, g2
